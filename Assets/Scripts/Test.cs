@@ -158,4 +158,11 @@ public class Test : MonoBehaviour
         //sería el equivalente a atravesar una esfera con las coordenadas espacio-tiempo definidas, que nos lleve a nuestro pasado.
         //Notar que de la misma manera, podríamos ir al futuro si conociéramos sus coordenadas de espacio-tiempo.
     }
+
+    void Hability_Tesseract()
+    {
+        //Abrir un teseracto permite adentrarse en una dimensión interdimensional, en la que podemos revisar todos los tiempos
+        //de un lapso determinado, y hacer pequeños ajustes en él, afectando la información en ese espacio-tiempo, influyendo
+        //sobre la fuerza gravitacional del lugar.
+    }
 }
