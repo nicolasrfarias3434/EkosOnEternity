@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-    private Vector3 origin = new Vector3(0.0f,0.5f,0.0f);
-
-    public Vector3 position;
-    public Vector3 direccion;
-    public Vector3 objectScale;
-    public Vector3 rotation;
+    public Vector3 origin = new Vector3(0.0f, 1.0f, 0.0f);
+    public Vector3 movement = new Vector3(0.0f, 0.0f, 0.0f);
+    public Vector3 objectScale = new Vector3(1.0f, 1.0f, 1.0f);
     public float speed;
+
+    public Vector3 direccion;
+    public Vector3 rotation;
     public int vida;
     public int deltaVida;
+
+    public float rayDistance;
 
     // Start is called before the first frame update
     void Start()
@@ -27,10 +29,25 @@ public class Test : MonoBehaviour
         UpdateStatus();
     }
 
+    /// <summary>
+    /// Esta función setea los valores iniciales del personaje
+    /// </summary>
+    void StartStatus()
+    {
+        speed = 10.0f;
+        rotation = new Vector3(0.0f, 0.0f, 0.0f);
+        objectScale = new Vector3(1.0f, 1.0f, 1.0f);
+        direccion = new Vector3(0.0f, 0.0f, 0.0f);
+        transform.position = origin;
+        transform.eulerAngles = rotation;
+        transform.localScale = objectScale;
+        deltaVida = 0;
+    }
+
     void UpdateStatus()
     {
-        transform.position += direccion * Time.deltaTime;
-        transform.eulerAngles += rotation * Time.deltaTime;
+        transform.position += direccion * speed * Time.deltaTime;
+        transform.eulerAngles += rotation * speed * Time.deltaTime;
         transform.localScale = objectScale;
         
         vida = deltaVida;
@@ -42,6 +59,7 @@ public class Test : MonoBehaviour
         Hability_DobleEdge();
         Hability_Levitation();
         Hability_TeleportToOrigin();
+        DetectEnemy();
         RotateMovement();
         DriveMovement();
     }
@@ -51,16 +69,30 @@ public class Test : MonoBehaviour
     /// </summary>
     void DriveMovement()
     {
-        if (Input.GetKeyDown(KeyCode.W)) direccion.z += 1;
-        if (Input.GetKeyDown(KeyCode.A)) direccion.x += -1;
-        if (Input.GetKeyDown(KeyCode.S)) direccion.z += -1;
-        if (Input.GetKeyDown(KeyCode.D)) direccion.x += 1;
+        if (Input.GetKey(KeyCode.W)) transform.position += transform.forward * speed * Time.deltaTime;
+        if (Input.GetKey(KeyCode.S)) transform.position -= transform.forward * speed * Time.deltaTime;
+        if (Input.GetKey(KeyCode.A)) transform.position -= transform.right * speed * Time.deltaTime;
+        if (Input.GetKey(KeyCode.D)) transform.position += transform.right * speed * Time.deltaTime;
     }
 
     void RotateMovement()
     {
-        if (Input.GetKeyDown(KeyCode.LeftArrow)) rotation += new Vector3(0.0f,-5.0f,0.0f);
-        if (Input.GetKeyDown(KeyCode.RightArrow)) rotation += new Vector3(0.0f,5.0f,0.0f);
+        if (Input.GetKey(KeyCode.LeftArrow)) transform.Rotate(new Vector3(0.0f,-speed/2, 0.0f));
+        if (Input.GetKey(KeyCode.RightArrow)) transform.Rotate(new Vector3(0.0f, speed/2, 0.0f));
+    }
+
+    #region Habilities
+
+    void DetectEnemy()
+    {
+        Debug.DrawRay(transform.position,transform.forward * rayDistance, Color.red);
+
+        RaycastHit hit;
+        if(Physics.Raycast(transform.position, transform.forward * rayDistance, out hit, rayDistance))
+        {
+            if(hit.transform.name == "BotEnemy")
+            Debug.Log("Patrullero está cerca frente a ti.");
+        }
     }
 
     /// <summary>
@@ -84,8 +116,8 @@ public class Test : MonoBehaviour
     /// </summary>
     void Hability_Levitation()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow)) direccion.y += 1;
-        if (Input.GetKeyDown(KeyCode.DownArrow)) direccion.y += -1;
+        if (Input.GetKey(KeyCode.UpArrow)) transform.position += transform.up * speed*5 * Time.deltaTime;
+        if (Input.GetKey(KeyCode.DownArrow)) transform.position -= transform.up * speed*5 * Time.deltaTime;
     }
 
     /// <summary>
@@ -93,27 +125,37 @@ public class Test : MonoBehaviour
     /// </summary>
     void Hability_TeleportToOrigin()
     {
-        if (Input.GetKeyDown(KeyCode.H)) 
+        if (Input.GetKeyDown(KeyCode.Y)) 
         { 
             StartStatus();
         }
     }
 
     /// <summary>
-    /// Esta función setea los valores iniciales del personaje
+    /// Esta función maneja las características de activar los efectos de hacer un salto en el tiempo
     /// </summary>
-    void StartStatus()
+    void Hability_TimeJump()
     {
-        speed = 0.5f;
-        rotation = new Vector3(0.0f, 0.0f, 0.0f);
-        objectScale = new Vector3(1.5f, 1.0f, 1.0f);
-        direccion = new Vector3(0.0f, 0.0f, 0.0f);
-        transform.position = origin;
-        transform.eulerAngles = rotation;
-        transform.localScale = objectScale;
-        deltaVida = 0;
+        //Los saltos en el espacio-tiempo son teóricamente imposibles, pero nada impide saltar a realidades paralelas
+        //coincidentes con la nuestra. Este tipo de posibilidades permiten que podamos ir a otra de estas realidades,
+        //de tal manera que su momento actual sea igual a un momento de nuestro pasado. Por lo que movernos a ella,
+        //sería el equivalente a atravesar una esfera con las coordenadas espacio-tiempo definidas, que nos lleve a nuestro pasado.
+        //Notar que de la misma manera, podríamos ir al futuro si conociéramos sus coordenadas de espacio-tiempo.
     }
 
+    /// <summary>
+    /// Esta función maneja las características al activar los efectos de usar un teseracto
+    /// </summary>
+    void Hability_Tesseract()
+    {
+        //Abrir un teseracto permite adentrarse en una dimensión interdimensional, en la que podemos revisar todos los tiempos
+        //de un lapso determinado, y hacer pequeños ajustes en él, afectando la información en ese espacio-tiempo, influyendo
+        //sobre la fuerza gravitacional del lugar.
+    }
+
+    #endregion
+
+    #region Powers
     /// <summary>
     /// Esta función maneja las características de activar los efectos de estar cerca de un agujero negro
     /// </summary>
@@ -147,22 +189,5 @@ public class Test : MonoBehaviour
         //Esta función se utiliza para revisar acciones del pasado.
     }
 
-    /// <summary>
-    /// Esta función maneja las características de activar los efectos de hacer un salto en el tiempo
-    /// </summary>
-    void Hability_TimeJump()
-    {
-        //Los saltos en el espacio-tiempo son teóricamente imposibles, pero nada impide saltar a realidades paralelas
-        //coincidentes con la nuestra. Este tipo de posibilidades permiten que podamos ir a otra de estas realidades,
-        //de tal manera que su momento actual sea igual a un momento de nuestro pasado. Por lo que movernos a ella,
-        //sería el equivalente a atravesar una esfera con las coordenadas espacio-tiempo definidas, que nos lleve a nuestro pasado.
-        //Notar que de la misma manera, podríamos ir al futuro si conociéramos sus coordenadas de espacio-tiempo.
-    }
-
-    void Hability_Tesseract()
-    {
-        //Abrir un teseracto permite adentrarse en una dimensión interdimensional, en la que podemos revisar todos los tiempos
-        //de un lapso determinado, y hacer pequeños ajustes en él, afectando la información en ese espacio-tiempo, influyendo
-        //sobre la fuerza gravitacional del lugar.
-    }
+    #endregion
 }
