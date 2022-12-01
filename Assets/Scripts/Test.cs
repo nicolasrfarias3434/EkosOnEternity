@@ -5,17 +5,18 @@ using UnityEngine;
 public class Test : MonoBehaviour
 {
     public Vector3 origin = new Vector3(0.0f, 1.0f, 0.0f);
-    public Vector3 movement = new Vector3(0.0f, 0.0f, 0.0f);
+    private Vector3 movement;
     public Vector3 objectScale = new Vector3(1.0f, 1.0f, 1.0f);
     public float speed;
 
     public Vector3 direccion;
-    public Vector3 rotation;
+    public Quaternion rotation;
     public int vida;
     public int deltaVida;
 
     public float rayDistance;
-
+    public float rayWalkableDistance;
+    public float falseGravity;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,17 +30,22 @@ public class Test : MonoBehaviour
         UpdateStatus();
     }
 
+    private void FixedUpdate()
+    {
+        Hability_Levitation();
+    }
+
     /// <summary>
     /// Esta función setea los valores iniciales del personaje
     /// </summary>
     void StartStatus()
     {
         speed = 10.0f;
-        rotation = new Vector3(0.0f, 0.0f, 0.0f);
+        rotation = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
         objectScale = new Vector3(1.0f, 1.0f, 1.0f);
         direccion = new Vector3(0.0f, 0.0f, 0.0f);
         transform.position = origin;
-        transform.eulerAngles = rotation;
+        transform.eulerAngles = rotation.eulerAngles;
         transform.localScale = objectScale;
         deltaVida = 0;
     }
@@ -47,7 +53,7 @@ public class Test : MonoBehaviour
     void UpdateStatus()
     {
         transform.position += direccion * speed * Time.deltaTime;
-        transform.eulerAngles += rotation * speed * Time.deltaTime;
+        //transform.rotation += rotation.eulerAngles * speed * Time.deltaTime;
         transform.localScale = objectScale;
         
         vida = deltaVida;
@@ -57,7 +63,6 @@ public class Test : MonoBehaviour
     {
         Hability_HealingMeditation();
         Hability_DobleEdge();
-        Hability_Levitation();
         Hability_TeleportToOrigin();
         DetectEnemy();
         RotateMovement();
@@ -81,6 +86,13 @@ public class Test : MonoBehaviour
         if (Input.GetKey(KeyCode.RightArrow)) transform.Rotate(new Vector3(0.0f, speed/2, 0.0f));
     }
 
+    //void DriveGravity()
+    //{
+    //    Debug.Log(string.Format("FalseGravity.transform {0} - FalseGravity.movement {1}", GetComponent<FalseGravity>().transform, GetComponent<FalseGravity>().movement));
+    //    GetComponent<Rigidbody>().transform.rotation = GetComponent<FalseGravity>().transform.rotation;
+    //    GetComponent<Rigidbody>().position += GetComponent<FalseGravity>().movement;
+    //}
+
     #region Habilities
 
     void DetectEnemy()
@@ -94,6 +106,8 @@ public class Test : MonoBehaviour
             Debug.Log("Patrullero está cerca frente a ti.");
         }
     }
+
+    
 
     /// <summary>
     /// Esta función cura al personaje
@@ -116,8 +130,10 @@ public class Test : MonoBehaviour
     /// </summary>
     void Hability_Levitation()
     {
+        RaycastHit downHit;
+        bool raycastDownHit = Physics.Raycast(transform.position, -transform.up, out downHit, 1.5f);
         if (Input.GetKey(KeyCode.UpArrow)) transform.position += transform.up * speed*5 * Time.deltaTime;
-        if (Input.GetKey(KeyCode.DownArrow)) transform.position -= transform.up * speed*5 * Time.deltaTime;
+        if (Input.GetKey(KeyCode.DownArrow) && !raycastDownHit) transform.position -= transform.up * speed*5 * Time.fixedDeltaTime;
     }
 
     /// <summary>

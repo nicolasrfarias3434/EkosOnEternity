@@ -2,13 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CharacterMoveMode
-{
-    Guardian,
-    Chasser
-}
-
-public class Turret : MonoBehaviour
+public class Turret : Cannoner
 {
     #region Public Attributes
     public GameObject target;
@@ -98,14 +92,14 @@ public class Turret : MonoBehaviour
         }
     }
 
-    private void DobleDisparar()
+    protected override void DobleDisparar()
     {
         Instantiate(bullet, new Vector3(bulletOrigin.position.x, bulletOrigin.position.y, bulletOrigin.position.z - 0.5f), bulletOrigin.rotation);
         Instantiate(bullet2, new Vector3(bulletOrigin.position.x, bulletOrigin.position.y, bulletOrigin.position.z + 0.5f), bulletOrigin.rotation);
         //Debug.Log("Double Fire!");
     }
 
-    private void TripleDisparar()
+    protected override void TripleDisparar()
     {
         Instantiate(bullet, bulletOrigin.position, transform.rotation);
         Instantiate(bullet2, new Vector3(bulletOrigin.position.x, bulletOrigin.position.y, bulletOrigin.position.z - 0.5f), bulletOrigin.rotation);
@@ -113,7 +107,7 @@ public class Turret : MonoBehaviour
         //Debug.Log("Triple Fire!");
     }
 
-    private void CuadrupleDisparar()
+    protected override void CuadrupleDisparar()
     {
         Instantiate(bullet, new Vector3(bulletOrigin.position.x, bulletOrigin.position.y - 0.5f, bulletOrigin.position.z), bulletOrigin.rotation);
         Instantiate(bullet2, new Vector3(bulletOrigin.position.x, bulletOrigin.position.y, bulletOrigin.position.z - 0.5f), bulletOrigin.rotation);

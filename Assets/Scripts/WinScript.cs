@@ -20,7 +20,12 @@ public class WinScript : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            Debug.Log("Ganaste!! Lograste teletransportarte a la zona segura!!");
+            Winning();
         }
+    }
+
+    public void Winning()
+    {
+        Debug.Log("Ganaste!! Lograste teletransportarte a la zona segura!!");
     }
 }
