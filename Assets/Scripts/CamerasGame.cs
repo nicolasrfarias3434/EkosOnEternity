@@ -4,13 +4,9 @@ using UnityEngine;
 
 public class CamerasGame : MonoBehaviour
 {
-
-    public GameObject PJCam;
-    public GameObject AMTCam;
-    public GameObject T1Cam;
+    public GameObject[] cameras;
 
     private int camIndex = 0;       //cámara a elegir
-    private int camCant = 3;    //cantidad de cámaras activables
 
     // Start is called before the first frame update
     void Start()
@@ -20,45 +16,25 @@ public class CamerasGame : MonoBehaviour
 
     private void Update()
     {
-        ChangeCamera();
+        ChangeCameraInArray();
     }
 
     private void SetDefault()
     {
-        PJCam.SetActive(true);
-        AMTCam.SetActive(false);
-        T1Cam.SetActive(false);
+        cameras[0].SetActive(true);
+        for(int i = 1; i < cameras.Length; i++)
+        {
+            cameras[i].SetActive(false);
+        }
     }
 
-    public void ChangeCamera()
+    public void ChangeCameraInArray()
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            camIndex = ++camIndex % camCant;
-            switch (camIndex)
-            {
-                case 0:
-                    {
-                        PJCam.SetActive(true);
-                        AMTCam.SetActive(false);
-                        T1Cam.SetActive(false);
-                        break;
-                    }
-                case 1:
-                    {
-                        PJCam.SetActive(false);
-                        AMTCam.SetActive(true);
-                        T1Cam.SetActive(false);
-                        break;
-                    }
-                case 2:
-                    {
-                        PJCam.SetActive(false);
-                        AMTCam.SetActive(false);
-                        T1Cam.SetActive(true);
-                        break;
-                    }
-            }
+            cameras[camIndex].SetActive(false);
+            camIndex = ++camIndex % cameras.Length;
+            cameras[camIndex].SetActive(true);
         }
     }
 }

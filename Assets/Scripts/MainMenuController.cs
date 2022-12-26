@@ -7,4 +7,9 @@ public class MainMenuController : MonoBehaviour
     {
         SceneManager.LoadScene("TesseractScene");
     }
+
+    public void ExitPlay()
+    {
+        Application.Quit();
+    }
 }

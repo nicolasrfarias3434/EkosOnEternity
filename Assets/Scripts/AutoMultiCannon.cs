@@ -8,7 +8,12 @@ public class AutoMultiCannon : Cannoner
     public GameObject bullet2;
     public GameObject bullet3;
     public GameObject bullet4;
+    private Queue<int> heatDegrees = new Queue<int>();
     public Transform bulletOrigin;
+
+    public int heatDegreesPerFire;
+    public int overheatLimit;
+    private bool overheat;
     public float coolDown;
     private float countdown;
     public float speed = 2.0f;
@@ -23,31 +28,39 @@ public class AutoMultiCannon : Cannoner
     void Update()
     {
         Temporizador();
-        if (Input.GetKeyDown(KeyCode.J))
+        if (heatDegrees.Count * heatDegreesPerFire <= overheatLimit)
         {
-            DobleDisparar();
+            if (Input.GetKeyDown(KeyCode.J))
+            {
+                DobleDisparar();
+            }
+            if (Input.GetKeyDown(KeyCode.K))
+            {
+                TripleDisparar();
+            }
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                CuadrupleDisparar();
+            }
         }
-        if (Input.GetKeyDown(KeyCode.K))
+        else
         {
-            TripleDisparar();
-        }
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            CuadrupleDisparar();
+            overheat = true;
         }
     }
 
     protected override void Disparar()
     {
         Instantiate(bullet, bulletOrigin.position, bulletOrigin.rotation);
-        //Debug.Log("Fire!");
+        heatDegrees.Enqueue(heatDegreesPerFire);
     }
 
     protected override void DobleDisparar()
     {
         Instantiate(bullet, new Vector3(bulletOrigin.position.x, bulletOrigin.position.y, bulletOrigin.position.z - 0.5f), bulletOrigin.rotation);
         Instantiate(bullet2, new Vector3(bulletOrigin.position.x, bulletOrigin.position.y, bulletOrigin.position.z + 0.5f), bulletOrigin.rotation);
-        //Debug.Log("Double Fire!");
+        heatDegrees.Enqueue(heatDegreesPerFire);
+        heatDegrees.Enqueue(heatDegreesPerFire);
     }
 
     protected override void TripleDisparar()
@@ -55,7 +68,9 @@ public class AutoMultiCannon : Cannoner
         Instantiate(bullet, bulletOrigin.position, transform.rotation);
         Instantiate(bullet2, new Vector3(bulletOrigin.position.x, bulletOrigin.position.y, bulletOrigin.position.z - 0.5f), bulletOrigin.rotation);
         Instantiate(bullet3, new Vector3(bulletOrigin.position.x, bulletOrigin.position.y, bulletOrigin.position.z + 0.5f), bulletOrigin.rotation);
-        //Debug.Log("Triple Fire!");
+        heatDegrees.Enqueue(heatDegreesPerFire);
+        heatDegrees.Enqueue(heatDegreesPerFire);
+        heatDegrees.Enqueue(heatDegreesPerFire);
     }
 
     protected override void CuadrupleDisparar()
@@ -64,11 +79,15 @@ public class AutoMultiCannon : Cannoner
         Instantiate(bullet2, new Vector3(bulletOrigin.position.x, bulletOrigin.position.y, bulletOrigin.position.z - 0.5f), bulletOrigin.rotation);
         Instantiate(bullet3, new Vector3(bulletOrigin.position.x, bulletOrigin.position.y, bulletOrigin.position.z + 0.5f), bulletOrigin.rotation);
         Instantiate(bullet4, new Vector3(bulletOrigin.position.x, bulletOrigin.position.y + 0.5f, bulletOrigin.position.z), bulletOrigin.rotation);
-        //Debug.Log("Quadra Fire!");
+        heatDegrees.Enqueue(heatDegreesPerFire);
+        heatDegrees.Enqueue(heatDegreesPerFire);
+        heatDegrees.Enqueue(heatDegreesPerFire);
+        heatDegrees.Enqueue(heatDegreesPerFire);
     }
 
     private void ResetCooldown()
     {
+        overheat = false;
         countdown = coolDown;
     }
 
@@ -76,10 +95,21 @@ public class AutoMultiCannon : Cannoner
     {
         countdown -= Time.deltaTime;
 
-        if (countdown <= 0)
+        for (int i = heatDegreesPerFire; i >= 0; i--)
+        {
+            if (heatDegrees.Count <= 0) break;
+            heatDegrees.Dequeue();
+        }
+
+        if (!overheat && countdown <= 0 && heatDegrees.Count * heatDegreesPerFire <= overheatLimit)
         {
             Disparar();
             ResetCooldown();
+        }
+        else 
+        {
+            if(countdown <= 0 && heatDegrees.Count <= 0)
+                overheat = (heatDegrees.Count >= overheatLimit);
         }
     }
 }

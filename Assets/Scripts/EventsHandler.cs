@@ -6,6 +6,8 @@ using UnityEngine.Events;
 
 public class EventsHandler : MonoBehaviour
 {
+    public static event Action atravesarPortal;
+
     public event Action<int, bool> onDeath;
     public event Action<int, bool> onWin;
     // Start is called before the first frame update
@@ -17,7 +19,7 @@ public class EventsHandler : MonoBehaviour
 
     private void EventsHandler_onWin(int arg1, bool arg2)
     {
-        Debug.Log("Ganar en el teseracto, te habilita nuevos portales, a nuevos lugares en el tiempo.");
+        Debug.Log("Ganar en el teseracto, te habilita nuevos portales, a nuevos lugares en el espacio-tiempo.");
     }
 
     private void EventsHandler_onDeath(int arg1, bool arg2)
@@ -28,6 +30,6 @@ public class EventsHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //atravesarPortal?.Invoke();
     }
 }
