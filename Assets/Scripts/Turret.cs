@@ -47,7 +47,7 @@ public class Turret : Cannoner
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.forward * rayDistance, out hit, rayDistance))
         {
-            if (hit.transform.name == "PJ001")
+            if (hit.transform.tag == "Player")
             {
                 DobleDisparar();
                 TripleDisparar();
@@ -69,7 +69,7 @@ public class Turret : Cannoner
 
     private void LookAtPlayerLerp()
     {
-        if (target != null && minDistanceToTarget < distance)
+        if (target != null && minDistanceToTarget < distance && distance < 40)
         {
             Quaternion newRotation = Quaternion.LookRotation(target.transform.position - transform.position);
             transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, speed * Time.deltaTime);
@@ -86,7 +86,7 @@ public class Turret : Cannoner
     private void FollowPlayer()
     {
         
-        if (characterMoveMode == CharacterMoveMode.Chasser && minDistanceToTarget < distance)
+        if (characterMoveMode == CharacterMoveMode.Chasser && minDistanceToTarget < distance && distance < 40)
         {
             transform.position += transform.forward * speed * Time.deltaTime;
         }

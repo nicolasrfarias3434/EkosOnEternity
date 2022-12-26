@@ -17,12 +17,7 @@ public class Portal : MonoBehaviour
             if(PlayerFromPortal.z <= 0.02)
             {
                 player.transform.position = OtherPortal.position + new Vector3(-PlayerFromPortal.x, +PlayerFromPortal.y,-PlayerFromPortal.z);
-                //Quaternion ttt = Quaternion.Inverse(transform.rotation) * player.transform.rotation;
                 player.transform.eulerAngles = Vector3.up * (OtherPortal.eulerAngles.y - (transform.eulerAngles.y - player.transform.eulerAngles.y) + 180);
-                //Vector3 CamLEA = Camera.main.transform.localEulerAngles;
-                Camera.main.transform.localEulerAngles = Vector3.right * (OtherPortal.eulerAngles.x + Camera.main.transform.eulerAngles.x);
-
-                //Vector3 velocidadLocalPlayer = transform.InverseTransformPoint(playerRBody.velocity);
                 playerRBody.velocity = -OtherPortal.transform.forward * playerRBody.velocity.y * 2;
             }
         }
